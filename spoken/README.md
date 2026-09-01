@@ -155,7 +155,7 @@ partway just run it again: it fetches a new URL and resumes the partial file.
 Then unpack and ingest:
 
 ```bash
-tar -xzf "C:\data\commonvoice\common-voice-scripted-speech-26-0-german-94178357.tar.gz" -C "C:\data\commonvoice"
+tar -xzf "C:\data\commonvoice\common-voice-scripted-speech-<version>-german-<id>.tar.gz" -C "C:\data\commonvoice"
 python _ingest.py --cv "C:\data\commonvoice"
 ```
 

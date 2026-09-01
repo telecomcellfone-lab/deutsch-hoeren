@@ -70,7 +70,7 @@
   .badge{display:inline-block;font-size:11px;padding:2px 7px;border-radius:999px;
     background:var(--accent-soft);color:var(--accent);margin-left:7px;vertical-align:2px}
   a{color:var(--accent)}
-  /* Compact mode also takes the Satzwerk palette, so the panel stops being a
+  /* Compact mode also takes the host page's palette, so the panel stops being a
      cream rectangle inside a dark app. Set on body rather than :root so the
      prefers-color-scheme block above cannot win it back. */
   body.compact{
@@ -83,7 +83,7 @@
   .compact .word-audio button{color:var(--accent)}
 
   /* ---- compact mode: ?compact=1 ----
-     For running inside the Satzwerk side panel, which is ~300px wide. Shrinks
+     For running embedded in another tool's side panel, ~300px wide. Shrinks
      everything, drops the title, and reorders: transport controls first, the
      sentence card next, the single-word Wiktionary clips last. Adam kept
      scrolling past the Wiktionary block to reach the controls.
@@ -529,7 +529,7 @@ if (SERVER){
 }
 show();
 
-// ?compact=1 shrinks everything for the Satzwerk side panel. Opened on its own
+// ?compact=1 shrinks everything for an embedded side panel. Opened on its own
 // the flag is absent and the page looks exactly as it always has.
 if (/[?&]compact=1/.test(location.search)) document.body.classList.add("compact");
 
