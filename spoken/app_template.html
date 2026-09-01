@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deutsch hören — Wortsuche</title>
+<style>
+  :root{
+    --bg:#faf8f5; --panel:#fff; --ink:#1a1815; --dim:#6b6560; --line:#e3ddd4;
+    --accent:#8c3a1f; --accent-soft:#f6e7df; --hit:#ffd94d;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#16151a; --panel:#1e1d24; --ink:#ece8e2; --dim:#9a938c; --line:#332f39;
+      --accent:#e0855f; --accent-soft:#3a251d; --hit:#8a6d00;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.5 -apple-system,"Segoe UI",Roboto,sans-serif}
+  header{padding:18px 20px 12px;border-bottom:1px solid var(--line);
+         position:sticky;top:0;background:var(--bg);z-index:10}
+  h1{margin:0 0 12px;font-size:19px;font-weight:650;letter-spacing:-.01em}
+  h1 span{color:var(--dim);font-weight:400;font-size:14px;margin-left:8px}
+  .searchrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  #q{flex:1 1 260px;min-width:200px;padding:11px 14px;font-size:19px;
+     border:2px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink)}
+  #q:focus{outline:none;border-color:var(--accent)}
+  .ctl{display:flex;gap:10px;align-items:center;font-size:13px;color:var(--dim);flex-wrap:wrap}
+  select,button{font:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--line);
+    border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  main{max-width:820px;margin:0 auto;padding:22px 20px 80px}
+  .status{color:var(--dim);font-size:14px;margin-bottom:16px}
+  .ipa{font-size:20px;margin:-8px 0 18px;letter-spacing:.01em}
+  .ipa b{font-weight:600}
+  .ipa .ph{color:var(--accent)}
+  .ipa .auto{font-size:11px;color:var(--dim);margin-left:9px;
+             border:1px solid var(--line);border-radius:999px;padding:1px 7px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+        padding:22px 24px}
+  .de{font-size:25px;line-height:1.42;margin:0 0 10px;font-weight:450}
+  .de mark{background:var(--hit);color:inherit;padding:1px 3px;border-radius:4px}
+  .en{color:var(--dim);font-size:16px;margin:0 0 18px;font-style:italic}
+  /* Spontaneous-speech clips are answers, and an answer on its own reads as a
+     non sequitur. The question goes above the sentence, quieter than it. */
+  .frage{color:var(--dim);font-size:13px;margin:0 0 8px;
+         border-left:3px solid var(--line);padding-left:10px}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .play{background:var(--accent);color:#fff;border:none;border-radius:999px;
+        width:52px;height:52px;font-size:20px;flex:none;display:grid;place-items:center}
+  .play:hover{filter:brightness(1.1)}
+  .mini{border-radius:999px;width:40px;height:40px;flex:none;font-size:17px;
+        padding:0;display:grid;place-items:center;line-height:1}
+  .mini.on{background:var(--accent);color:#fff;border-color:transparent}
+  .meta{font-size:13px;color:var(--dim);flex:1 1 auto}
+  .meta b{color:var(--ink);font-weight:600}
+  .lic{font-size:11px;color:var(--dim);opacity:.75;margin-top:3px}
+  .nav{display:flex;gap:8px;align-items:center;margin:16px 0 6px}
+  .count{font-size:13px;color:var(--dim);margin-left:auto}
+  .word-audio{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .word-audio button{border-radius:999px;padding:8px 15px;background:var(--accent-soft);
+     border-color:transparent}
+  .sect{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--dim);
+        margin:26px 0 10px;font-weight:650}
+  .empty{padding:34px 0;color:var(--dim);text-align:center}
+  kbd{background:var(--panel);border:1px solid var(--line);border-bottom-width:2px;
+      border-radius:5px;padding:1px 6px;font-size:12px;font-family:inherit}
+  .hint{font-size:13px;color:var(--dim);margin-top:26px;line-height:1.9}
+  .badge{display:inline-block;font-size:11px;padding:2px 7px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent);margin-left:7px;vertical-align:2px}
+  a{color:var(--accent)}
+  /* Compact mode also takes the Satzwerk palette, so the panel stops being a
+     cream rectangle inside a dark app. Set on body rather than :root so the
+     prefers-color-scheme block above cannot win it back. */
+  body.compact{
+    --bg:#0a0a0c; --panel:#17171b; --ink:#e2e2e8; --dim:#93939e; --line:#26262b;
+    --accent:#b6b2ff; --accent-soft:rgba(96,92,220,.18); --hit:rgba(240,180,95,.34);
+  }
+  .compact .de mark{color:#f6d9a8}
+  .compact input#q{background:#121216;color:var(--ink);border-color:var(--line)}
+  .compact select,.compact button{background:#121216;color:var(--ink)}
+  .compact .word-audio button{color:var(--accent)}
+
+  /* ---- compact mode: ?compact=1 ----
+     For running inside the Satzwerk side panel, which is ~300px wide. Shrinks
+     everything, drops the title, and reorders: transport controls first, the
+     sentence card next, the single-word Wiktionary clips last. Adam kept
+     scrolling past the Wiktionary block to reach the controls.
+     Nothing here applies without the query flag, so opening this file on its
+     own is unchanged. */
+  .compact header{padding:8px 10px 7px}
+  .compact h1{display:none}
+  .compact .searchrow{gap:5px}
+  .compact input#q{font-size:13px;padding:6px 9px}
+  .compact .ctl{font-size:11px;gap:6px;width:100%}
+  .compact select,.compact button{font-size:11px;padding:4px 7px}
+  .compact main{padding:10px 10px 24px;max-width:none;display:flex;flex-direction:column}
+  .compact .status{font-size:11.5px;margin-bottom:8px;order:0}
+  .compact .ipa{font-size:15px;margin:0 0 10px;order:1}
+  .compact .ipa .auto{font-size:10px}
+  .compact #sentbox{order:2;display:flex;flex-direction:column}
+  .compact #sentbox .sect{order:0}
+  .compact #sentbox .nav{order:1;margin:0 0 8px}
+  .compact #sentbox .card{order:2}
+  .compact #wordbox{order:3;margin-top:16px}
+  .compact .empty{order:4}
+  .compact .hint{order:5;font-size:10.5px;line-height:1.6;margin-top:14px}
+  .compact .sect{font-size:10px;margin-bottom:5px}
+  .compact .card{padding:10px 12px;border-radius:10px;font-size:14px}
+  .compact .frage{font-size:11px;margin-bottom:6px;padding-left:7px}
+  .compact .nav{margin:8px 0 4px}
+  .compact .count{font-size:11px}
+  .compact .word-audio button{padding:5px 11px;font-size:12px}
+  .compact .badge{font-size:9.5px;padding:1px 5px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Deutsch hören <span>ein Wort, viele Stimmen</span></h1>
+  <div class="searchrow">
+    <input id="q" placeholder="Ein deutsches Wort eingeben…" autocomplete="off" autofocus>
+    <div class="ctl">
+      <label>Treffer
+        <select id="mode">
+          <option value="smart">klug</option>
+          <option value="exact">genau</option>
+          <option value="prefix">Wortanfang</option>
+          <option value="any">enthält</option>
+        </select>
+      </label>
+      <label>Tempo
+        <select id="rate">
+          <option value="0.6">0,6&times;</option>
+          <option value="0.75">0,75&times;</option>
+          <option value="1" selected>1&times;</option>
+          <option value="1.25">1,25&times;</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="mix" checked> Stimmen mischen</label>
+      <label><input type="checkbox" id="auto"> Autoplay</label>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="status" id="status">Lädt…</div>
+  <div class="ipa" id="ipa" hidden></div>
+
+  <div id="wordbox" hidden>
+    <div class="sect">Das Wort allein <span class="badge">Wiktionary</span></div>
+    <div class="word-audio" id="wordaudio"></div>
+  </div>
+
+  <div id="sentbox" hidden>
+    <div class="sect">Im Satz</div>
+    <div class="card" id="card"></div>
+    <div class="nav">
+      <button id="prev">&larr; Zurück</button>
+      <button id="next">Weiter &rarr;</button>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+
+  <div class="empty" id="empty" hidden></div>
+
+  <div class="hint">
+    <kbd>Enter</kbd> suchen &nbsp;·&nbsp; <kbd>Leertaste</kbd> abspielen / Pause &nbsp;·&nbsp;
+    <kbd>R</kbd> von vorn &nbsp;·&nbsp; <kbd>L</kbd> Schleife &nbsp;·&nbsp;
+    <kbd>&rarr;</kbd> nächste Stimme &nbsp;·&nbsp; <kbd>&larr;</kbd> vorige &nbsp;·&nbsp;
+    <kbd>/</kbd> zurück zur Suche<br>
+    Sätze und Sprecher: <a href="https://tatoeba.org" target="_blank">Tatoeba</a><span
+      id="cvcredit" hidden> und <a href="https://commonvoice.mozilla.org"
+      target="_blank">Mozilla Common Voice</a> (vorgelesen und spontan gesprochen)</span>.
+    Einzelwörter: <a href="https://commons.wikimedia.org" target="_blank">Wikimedia Commons</a>.
+  </div>
+</main>
+
+<script id="clipdata" type="application/json">__CLIPS__</script>
+<script>
+"use strict";
+// Each clip: [ref, german, english, speaker, licence, source, prompt]
+//   source "t" = Tatoeba (ref is an audio id, streamed from tatoeba.org)
+//          "c" = Common Voice, read aloud (ref is a file, served by serve.py)
+//          "s" = Common Voice Spontaneous Speech, unscripted answers to a
+//                question; "prompt" holds that question, and only this source
+//                has one. The baked-in Tatoeba rows are six long, so prompt
+//                simply comes back undefined there.
+// Opened as a plain file the page searches the baked-in Tatoeba clips.
+// Served by serve.py it queries the database instead, which is the only way
+// Common Voice fits: a million rows will not embed in an HTML file.
+var CLIPS = JSON.parse(document.getElementById("clipdata").textContent);
+var SERVER = location.protocol === "http:" || location.protocol === "https:";
+// Opened as a file there is no database, so only Tatoeba is actually searched;
+// crediting Common Voice there would be a lie.
+document.getElementById("cvcredit").hidden = !SERVER;
+var STATS = null;
+var LETTER = "A-Za-zÄÖÜäöüßÀ-ÿ";
+var $ = function(s){ return document.querySelector(s); };
+var q = $("#q"), modeSel = $("#mode"), rateSel = $("#rate"),
+    mixBox = $("#mix"), autoBox = $("#auto");
+var hits = [], at = 0, term = "", seq = 0;
+var player = new Audio(), loadedUrl = null, loopOn = false;
+// Word clips get their own element so playing one does not hijack the
+// sentence player's pause state.
+var wordPlayer = new Audio();
+
+function audioUrl(c){
+  if (c[5] === "c" || c[5] === "s"){
+    // serve.py roots each source at its own clips directory.
+    return "/audio/" + c[5] + "/" +
+      String(c[0]).split("/").map(encodeURIComponent).join("/");
+  }
+  return "https://tatoeba.org/audio/download/" + c[0];
+}
+var QUELLE = { c: "Common Voice", s: "Spontansprache", t: "Tatoeba" };
+function norm(s){ return s.toLowerCase().replace(/ß/g, "ss"); }
+function esc(s){
+  return s.replace(/[&<>]/g, function(m){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;" }[m];
+  });
+}
+
+// 0 = whole word, 1 = starts with, 2 = inside a compound, 3 = no match.
+function rankOf(sentence, needle){
+  var words = norm(sentence).match(new RegExp("[" + LETTER + "]+", "g")) || [];
+  var best = 3;
+  for (var i = 0; i < words.length; i++){
+    var w = words[i];
+    if (w === needle) return 0;
+    if (w.indexOf(needle) === 0){ if (best > 1) best = 1; }
+    else if (w.indexOf(needle) > 0){ if (best > 2) best = 2; }
+  }
+  return best;
+}
+
+// Round-robin across speakers so consecutive clips are different voices.
+function interleave(list){
+  var bins = {}, order = [];
+  for (var i = 0; i < list.length; i++){
+    var sp = list[i][3];
+    if (!bins[sp]){ bins[sp] = []; order.push(sp); }
+    bins[sp].push(list[i]);
+  }
+  var out = [], live = true;
+  while (live){
+    live = false;
+    for (var j = 0; j < order.length; j++){
+      var b = bins[order[j]];
+      if (b.length){ out.push(b.shift()); live = true; }
+    }
+  }
+  return out;
+}
+
+function search(raw){
+  term = (raw || "").trim();
+  if (!term){ hits = []; show(); return; }
+  loadWordAudio(term);
+  loadIpa(term);
+  if (SERVER){ searchServer(term); return; }
+  searchLocal(term);
+}
+
+// Phonetic spelling, via serve.py. DWDS sends no CORS header, so the page
+// cannot ask it directly; offline mode simply goes without.
+function loadIpa(word){
+  var box = $("#ipa");
+  box.hidden = true;
+  if (!SERVER) return;
+  fetch("/api/ipa?q=" + encodeURIComponent(word))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (word !== term || !d || !d.ipa) return;
+      box.innerHTML = "<b>" + esc(word) + "</b> &nbsp;<span class='ph'>[" +
+        esc(d.ipa) + "]</span>" +
+        (d.status === "auto"
+          ? "<span class='auto' title='Von DWDS automatisch erzeugt, nicht geprüft'>automatisch</span>"
+          : "");
+      box.hidden = false;
+    })
+    .catch(function(){});
+}
+
+// Server mode: the database does the matching. Late replies from an earlier
+// keystroke must not overwrite a newer search, hence the sequence check.
+function searchServer(t){
+  var mine = ++seq;
+  $("#status").textContent = "sucht…";
+  fetch("/api/search?mode=" + encodeURIComponent(modeSel.value) +
+        "&q=" + encodeURIComponent(t))
+    .then(function(r){ return r.json(); })
+    .then(function(rows){
+      if (mine !== seq) return;
+      if (!rows || rows.error) rows = [];
+      hits = mixBox.checked ? interleave(rows) : rows;
+      at = 0;
+      show();
+    })
+    .catch(function(){
+      if (mine !== seq) return;
+      hits = []; show();
+      $("#status").textContent = "Server nicht erreichbar.";
+    });
+}
+
+function searchLocal(raw){
+  var needle = norm(raw), mode = modeSel.value;
+  var cap = mode === "exact" ? 0 : mode === "prefix" ? 1 : 2;
+  var found = [];
+  for (var i = 0; i < CLIPS.length; i++){
+    var r = rankOf(CLIPS[i][1], needle);
+    if (r <= cap) found.push([r, CLIPS[i]]);
+  }
+  // "klug": if real whole-word hits exist, don't dilute them with compounds.
+  var exactOnly = false;
+  if (mode === "smart"){
+    for (var k = 0; k < found.length; k++) if (found[k][0] === 0){ exactOnly = true; break; }
+  }
+  if (exactOnly) found = found.filter(function(f){ return f[0] === 0; });
+  found.sort(function(a, b){ return a[0] - b[0] || a[1][1].length - b[1][1].length; });
+  hits = found.map(function(f){ return f[1]; });
+  if (mixBox.checked) hits = interleave(hits);
+  at = 0;
+  show();
+}
+
+function highlight(sentence, needle){
+  var safe = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  var re = new RegExp("([" + LETTER + "]*" + safe + "[" + LETTER + "]*)", "gi");
+  return esc(sentence).replace(re, "<mark>$1</mark>");
+}
+
+function show(){
+  var has = hits.length > 0;
+  $("#sentbox").hidden = !has;
+  $("#empty").hidden = has || !term;
+  if (!term){
+    var nClips, nVoices;
+    if (STATS){
+      nClips = STATS.clips; nVoices = STATS.speakers;
+    } else {
+      var voices = {};
+      for (var i = 0; i < CLIPS.length; i++) voices[CLIPS[i][3]] = 1;
+      nClips = CLIPS.length; nVoices = Object.keys(voices).length;
+    }
+    $("#status").textContent = nClips.toLocaleString("de-DE") + " Aufnahmen von " +
+      nVoices.toLocaleString("de-DE") + " Sprechern. Tippe ein Wort.";
+    $("#wordbox").hidden = true;
+    return;
+  }
+  if (!has){
+    $("#empty").textContent = "Keine Aufnahme mit „" + term + "“ gefunden.";
+    $("#status").textContent = "";
+    return;
+  }
+  var c = hits[at], seen = {};
+  for (var j = 0; j < hits.length; j++) seen[hits[j][3]] = 1;
+  $("#status").textContent = hits.length.toLocaleString("de-DE") +
+    " Aufnahmen · " + Object.keys(seen).length + " verschiedene Stimmen";
+  $("#card").innerHTML =
+    (c[6] ? '<p class="frage">Frage: ' + esc(c[6]) + '</p>' : '') +
+    '<p class="de">' + highlight(c[1], norm(term)) + '</p>' +
+    (c[2] ? '<p class="en">' + esc(c[2]) + '</p>'
+          : '<p class="en">(keine Übersetzung hinterlegt)</p>') +
+    '<div class="row">' +
+      '<button class="play" id="playbtn" title="Abspielen / Pause (Leertaste)">&#9654;</button>' +
+      '<button class="mini" id="replaybtn" title="Von vorn (R)">&#8635;</button>' +
+      '<button class="mini" id="loopbtn" title="Schleife: wiederholt diesen Clip (L)">&#8734;</button>' +
+      '<div class="meta">Gesprochen von <b>' + esc(c[3]) + '</b>' +
+        '<div class="lic">' +
+          ((QUELLE[c[5]] || "Tatoeba") + " · ") +
+          (c[4] ? esc(c[4]) : "Lizenz nicht angegeben, nur zum Anhören") +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  $("#count").textContent = (at + 1) + " von " + hits.length;
+  $("#playbtn").onclick = toggle;
+  $("#replaybtn").onclick = replay;
+  $("#loopbtn").onclick = toggleLoop;
+  paintButtons();
+}
+
+// One Audio per clip, kept across renders so pause can resume rather than
+// restart. Rebuilt only when the clip actually changes.
+function ensureAudio(){
+  var c = hits[at];
+  if (!c) return null;
+  var url = audioUrl(c);
+  if (loadedUrl !== url){
+    player.pause();
+    player = new Audio(url);
+    player.playbackRate = parseFloat(rateSel.value);
+    player.loop = loopOn;
+    // With the loop on, "ended" never fires, so autoplay cannot run away.
+    player.onended = function(){ if (autoBox.checked) step(1); };
+    player.onplay = paintButtons;
+    player.onpause = paintButtons;
+    loadedUrl = url;
+  }
+  return player;
+}
+
+function paintButtons(){
+  var b = $("#playbtn");
+  if (b) b.innerHTML = (loadedUrl && !player.paused) ? "&#10074;&#10074;" : "&#9654;";
+  var l = $("#loopbtn");
+  if (l) l.className = "mini" + (loopOn ? " on" : "");
+}
+
+function toggle(){
+  var p = ensureAudio();
+  if (!p) return;
+  if (p.paused) p.play().catch(function(){}); else p.pause();
+  paintButtons();
+}
+
+function replay(){
+  var p = ensureAudio();
+  if (!p) return;
+  p.currentTime = 0;
+  p.play().catch(function(){});
+}
+
+function toggleLoop(){
+  loopOn = !loopOn;
+  player.loop = loopOn;
+  paintButtons();
+}
+
+function step(d){
+  if (!hits.length) return;
+  at = (at + d + hits.length) % hits.length;
+  show();
+  replay();
+}
+
+// Single-word recordings, fetched live from Wikimedia Commons.
+// Exact filenames first (fast, precise); if the base form was never recorded,
+// fall back to a title search so inflected forms still turn something up.
+function loadWordAudio(word){
+  var box = $("#wordaudio");
+  $("#wordbox").hidden = false;
+  box.textContent = "…";
+  var API = "https://commons.wikimedia.org/w/api.php?format=json&origin=*" +
+            "&action=query&prop=imageinfo&iiprop=user%7Curl";
+  var cap = word.charAt(0).toUpperCase() + word.slice(1);
+  var low = word.charAt(0).toLowerCase() + word.slice(1);
+  var names = [];
+  [cap, low].forEach(function(w){
+    ["De-" + w + ".ogg", "De-" + w + "2.ogg", "De-" + w + "3.ogg",
+     "De-at-" + w + ".ogg", "De-ch-" + w + ".ogg"].forEach(function(n){
+       if (names.indexOf(n) < 0) names.push(n);
+     });
+  });
+
+  function pagesOf(d){
+    var pages = (d && d.query && d.query.pages) ? d.query.pages : {};
+    return Object.keys(pages).map(function(k){ return pages[k]; })
+                 .filter(function(p){ return p.imageinfo; });
+  }
+
+  var exact = API + "&titles=" +
+      encodeURIComponent(names.map(function(n){ return "File:" + n; }).join("|"));
+  // generator=search reuses the same imageinfo props, so one round trip either way.
+  var loose = API + "&generator=search&gsrnamespace=6&gsrlimit=12&gsrsearch=" +
+      encodeURIComponent('intitle:/De-.*' + word + '/ filetype:audio');
+
+  fetch(exact).then(function(r){ return r.json(); }).then(function(d){
+    var found = pagesOf(d);
+    if (found.length) return found;
+    return fetch(loose).then(function(r){ return r.json(); }).then(pagesOf);
+  }).then(function(found){
+    if (!found.length){
+      box.innerHTML = '<span style="color:var(--dim);font-size:14px">' +
+        'Keine Einzelaufnahme gefunden. ' +
+        '<a href="https://de.wiktionary.org/wiki/' + encodeURIComponent(word) +
+        '" target="_blank">Wiktionary öffnen</a></span>';
+      return;
+    }
+    box.innerHTML = "";
+    var seenUrl = {};
+    found.forEach(function(p){
+      var info = p.imageinfo[0];
+      if (seenUrl[info.url]) return;
+      seenUrl[info.url] = 1;
+      // Show the recorded form, since the fallback may return an inflection.
+      var form = p.title.replace(/^File:De-(at-|ch-)?/, "").replace(/\.(ogg|wav|mp3)$/i, "");
+      var b = document.createElement("button");
+      b.innerHTML = "&#9654; " + esc(form) + ' <span style="opacity:.6">' +
+                    esc(info.user) + "</span>";
+      b.onclick = function(){
+        player.pause();
+        wordPlayer.pause();
+        wordPlayer = new Audio(info.url);
+        wordPlayer.playbackRate = parseFloat(rateSel.value);
+        wordPlayer.play().catch(function(){});
+      };
+      box.appendChild(b);
+    });
+  }).catch(function(){
+    box.innerHTML = '<span style="color:var(--dim);font-size:14px">' +
+      'Commons nicht erreichbar. ' +
+      '<a href="https://de.wiktionary.org/wiki/' + encodeURIComponent(word) +
+      '" target="_blank">Wiktionary öffnen</a></span>';
+  });
+}
+
+q.addEventListener("keydown", function(e){ if (e.key === "Enter") search(q.value); });
+modeSel.onchange = function(){ search(q.value); };
+mixBox.onchange = function(){ search(q.value); };
+rateSel.onchange = function(){ player.playbackRate = parseFloat(rateSel.value); };
+$("#next").onclick = function(){ step(1); };
+$("#prev").onclick = function(){ step(-1); };
+document.addEventListener("keydown", function(e){
+  if (e.target === q){ if (e.key === "Escape") q.blur(); return; }
+  if (e.key === " "){ e.preventDefault(); toggle(); }
+  else if (e.key === "ArrowRight") step(1);
+  else if (e.key === "ArrowLeft") step(-1);
+  else if (e.key === "r" || e.key === "R") replay();
+  else if (e.key === "l" || e.key === "L") toggleLoop();
+  else if (e.key === "/"){ e.preventDefault(); q.focus(); q.select(); }
+});
+
+if (SERVER){
+  fetch("/api/stats").then(function(r){ return r.json(); })
+    .then(function(s){ STATS = s; if (!term) show(); })
+    .catch(function(){});
+}
+show();
+
+// ?compact=1 shrinks everything for the Satzwerk side panel. Opened on its own
+// the flag is absent and the page looks exactly as it always has.
+if (/[?&]compact=1/.test(location.search)) document.body.classList.add("compact");
+
+// ?q=Wort deep-links a search, so the flashcard deck can point straight here.
+var startWord = (location.search.match(/[?&]q=([^&]*)/) || [])[1];
+if (startWord){
+  startWord = decodeURIComponent(startWord.replace(/\+/g, " "));
+  q.value = startWord;
+  search(startWord);
+}
+</script>
+</body>
+</html>

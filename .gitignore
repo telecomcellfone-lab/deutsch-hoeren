@@ -1,0 +1,16 @@
+# Corpus data and everything derived from it. All of it is rebuildable —
+# see spoken/README.md "Rebuilding". None of it belongs in git.
+spoken/data/*
+!spoken/data/.gitkeep
+
+# The generated offline page: 2.8 MB of baked-in Tatoeba clips.
+# Rebuild with: python spoken/_build_index.py && python spoken/_build_app.py
+word-audio-search.html
+
+# Common Voice / Spontaneous Speech audio lives outside the repo entirely
+# (e.g. C:\data\commonvoice). A million files inside a working tree makes
+# git status crawl even when ignored.
+
+__pycache__/
+*.pyc
+*.db
