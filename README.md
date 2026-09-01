@@ -10,6 +10,15 @@ under the sentence.
 
 One audiobook narrator only teaches you one voice. This gives you a thousand.
 
+It is for two things:
+
+- **Listening comprehension.** Hearing one word from twenty different people
+  trains your ear to catch it whoever is speaking, however fast, wherever they
+  are from. That is the skill that decides whether you follow a real
+  conversation.
+- **Pronunciation.** You hear how the word is actually said by native speakers,
+  and copy that, instead of guessing it from the spelling.
+
 Almost all of it works with no internet, and nothing you type is ever sent to
 anybody. See [What works offline](#what-works-offline) for the exact split.
 
