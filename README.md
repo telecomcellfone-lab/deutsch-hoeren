@@ -26,9 +26,24 @@ is sent anywhere.
 | **Spontaneous Speech** (local mp3s) | 262 | 27 | no, but each shows its prompt |
 | **Wikimedia Commons** (fetched live) | the word alone | ~1–3 | n/a |
 
-Tatoeba comes back first so translated examples surface first; Common Voice
-supplies the range. *Flussbett* returns 23 recordings from 23 different
-speakers where Tatoeba alone had none.
+Tatoeba comes back first so translated examples surface first. Common Voice
+supplies the range.
+
+**How many clips will a word get?** That depends entirely on how often people
+happened to say it. Measured on a real install:
+
+| Word | Clips |
+|---|---|
+| `Straße`, `natürlich`, `Kirche` | 600 (the cap) |
+| `Frühstück` | 169 |
+| `Schornstein` | 61 |
+| `Flussbett` | 23 |
+| `Wetterleuchten` | 3 |
+| `Kummerbund` | 0 |
+
+Obscure words are mostly present, just thin. *Wetterleuchten* appears about
+6,000 times in 53 billion words of written German, and three people still
+recorded it. One search returns at most 600 clips.
 
 Full detail on match modes, the speaker-rotation shuffle, IPA, keyboard
 shortcuts and the licence of every clip: **[spoken/README.md](spoken/README.md)**.
