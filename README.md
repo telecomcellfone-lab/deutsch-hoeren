@@ -13,7 +13,7 @@ One audiobook narrator only teaches you one voice. This gives you a thousand.
 Almost all of it works with no internet, and nothing you type is ever sent to
 anybody. See [What works offline](#what-works-offline) for the exact split.
 
-![no screenshot yet](https://img.shields.io/badge/python-3.9%2B-blue) ![licence](https://img.shields.io/badge/licence-MIT-green)
+![python](https://img.shields.io/badge/python-3.9%2B-blue) ![licence](https://img.shields.io/badge/licence-MIT-green)
 
 ---
 
@@ -149,7 +149,7 @@ while you use it, because the Tatoeba audio is streamed. It is a way to try the
 idea, not the offline version.
 
 ```bash
-git clone https://github.com/YOURNAME/deutsch-hoeren.git
+git clone https://github.com/telecomcellfone-lab/deutsch-hoeren.git
 cd deutsch-hoeren/spoken/data
 curl -sLO https://downloads.tatoeba.org/exports/per_language/deu/deu_sentences.tsv.bz2
 curl -sLO https://downloads.tatoeba.org/exports/per_language/deu/deu-eng_links.tsv.bz2
