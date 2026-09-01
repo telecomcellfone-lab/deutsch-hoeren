@@ -14,7 +14,7 @@
 [CmdletBinding()]
 param(
     [string] $DatasetId = "cmqim3xpi00t6nr07k0myqtkr",
-    [string] $OutFile   = "common-voice-scripted-speech-26-0-german-94178357.tar.gz",
+    [string] $OutFile   = "common-voice-de.tar.gz",
     [string] $Dest
 )
 
