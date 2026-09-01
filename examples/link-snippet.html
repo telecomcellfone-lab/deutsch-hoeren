@@ -1,0 +1,52 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Flashcard link to Deutsch hören</title>
+<!--
+  A minimal working example of linking a flashcard to the app.
+
+  Open this file in a browser, click a word, and the app opens on that word.
+  Start the server first: Deutsch-hoeren.bat, or python spoken/serve.py
+
+  Copy hoerenLink() into your own deck. That function is the entire trick.
+-->
+<style>
+  body{font:16px/1.6 system-ui,sans-serif;max-width:34em;margin:3em auto;padding:0 1em}
+  .card{border:1px solid #ccc;border-radius:10px;padding:1em 1.2em;margin:1em 0}
+  .de{font-size:1.4em;font-weight:600}
+  .en{color:#666}
+  a.hoeren{display:inline-block;margin-top:.7em;padding:6px 12px;border:1px solid #888;
+           border-radius:6px;text-decoration:none;font-size:.9em;color:inherit}
+  a.hoeren:hover{background:#f0f0f0}
+</style>
+
+<h1>Deutsch hören: flashcard link demo</h1>
+<p>Click a button. The app opens and searches that word.</p>
+<div id="deck"></div>
+
+<script>
+// The port serve.py listens on. Change it here if you started it on another.
+var HOEREN = "http://127.0.0.1:8731/";
+
+// This is the whole feature. encodeURIComponent keeps umlauts and ß safe.
+function hoerenLink(word) {
+  return HOEREN + "?q=" + encodeURIComponent(word);
+}
+
+// Your own deck goes here. Any list of words will do.
+var cards = [
+  { de: "Straße",        en: "street, road" },
+  { de: "Fluß",          en: "river" },
+  { de: "Wetterleuchten", en: "sheet lightning" },
+  { de: "gemütlich",     en: "cosy, comfortable" }
+];
+
+document.getElementById("deck").innerHTML = cards.map(function (c) {
+  return '<div class="card">' +
+           '<div class="de">' + c.de + '</div>' +
+           '<div class="en">' + c.en + '</div>' +
+           '<a class="hoeren" target="_blank" href="' + hoerenLink(c.de) + '">' +
+             '🎧 Hear real people say ' + c.de +
+           '</a>' +
+         '</div>';
+}).join("");
+</script>

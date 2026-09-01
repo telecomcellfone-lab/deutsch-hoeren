@@ -70,6 +70,36 @@ people can.
 
 ---
 
+## Link it to your flashcards
+
+This is what makes it part of a daily routine instead of a thing you open now
+and then.
+
+The app takes a word in the address bar:
+
+```
+http://127.0.0.1:8731/?q=Stra%C3%9Fe
+```
+
+So any flashcard deck that lets you write a link can send you straight here. You
+meet a new word, you make a card for it, and the card gets a button. Press the
+button and you hear twenty strangers say that word, instead of guessing the
+sound from the spelling.
+
+For **Anki**, this goes in the Back Template of your note type:
+
+```html
+<a href="http://127.0.0.1:8731/?q={{Front}}">🎧 Hear real people say {{Front}}</a>
+```
+
+The server has to be running. Anki on a computer works; AnkiDroid and AnkiMobile
+cannot reach `127.0.0.1` on your PC.
+
+Copy-paste versions for Anki and for your own HTML decks, plus the narrow
+side-panel mode, are in **[examples/](examples/)**.
+
+---
+
 ## Try it in five minutes (Tatoeba only, no big download)
 
 Needs Python 3.9+ and about 120 MB.
