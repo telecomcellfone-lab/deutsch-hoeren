@@ -9,9 +9,11 @@ This is the reference manual. For setup start at the [top-level README](../READM
 **Start it:** double-click `../Deutsch-hoeren.bat`. That runs `serve.py` and opens
 the browser on the full corpus: **985,052 recordings from 19,759 speakers**.
 
-**Offline fallback:** `../word-audio-search.html` is one self-contained file that
-works with no server, on the Tatoeba clips alone. Useful when the corpus drive
-is not around.
+**No-server fallback:** `../word-audio-search.html` is one self-contained file
+that runs with no server and no database, on the Tatoeba clips alone. Useful
+when the corpus drive is not around. It is not an *offline* fallback: Tatoeba
+audio is streamed, so that file needs the internet. Offline listening is what
+the local Common Voice clips are for.
 
 ## What it searches
 

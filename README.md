@@ -10,8 +10,8 @@ under the sentence.
 
 One audiobook narrator only teaches you one voice. This gives you a thousand.
 
-It works with no internet. The recordings sit on your own disk. Nothing you type
-is sent anywhere.
+Almost all of it works with no internet, and nothing you type is ever sent to
+anybody. See [What works offline](#what-works-offline) for the exact split.
 
 ![no screenshot yet](https://img.shields.io/badge/python-3.9%2B-blue) ![licence](https://img.shields.io/badge/licence-MIT-green)
 
@@ -85,6 +85,33 @@ people can.
 
 ---
 
+## What works offline
+
+Not everything, and it would be dishonest to say otherwise.
+
+**Works with no internet** (952,112 clips, 19,747 speakers, 96.7% of the total):
+
+- Common Voice, 951,850 clips. These are mp3 files on your own disk.
+- Spontaneous Speech, 262 clips. Also on your disk.
+- Search itself, which runs in a local database.
+
+**Needs the internet:**
+
+- Tatoeba, 32,940 clips. These are streamed from tatoeba.org and never copied to
+  your disk. That is a licensing choice, not a technical one: many of those
+  recordings state no licence, so the app is not entitled to keep a copy.
+- **The English translations.** All 31,585 of them are attached to Tatoeba
+  sentences. Offline you still hear the German, but nothing is translated.
+- The single-word recordings from Wikimedia Commons.
+- The IPA line, which is fetched from DWDS. Once fetched it is cached, so a word
+  you have looked up before still shows its IPA offline.
+
+So offline you keep the thing that matters most, a million recordings of real
+speakers, and you lose the English glosses. On a plane that is a fair trade. At
+your desk, leave the internet on and you get everything.
+
+---
+
 ## Link it to your flashcards
 
 This is what makes it part of a daily routine instead of a thing you open now
@@ -117,7 +144,9 @@ side-panel mode, are in **[examples/](examples/)**.
 
 ## Try it in five minutes (Tatoeba only, no big download)
 
-Needs Python 3.9+ and about 120 MB.
+Needs Python 3.9+ and about 47 MB. Note this version **does** need the internet
+while you use it, because the Tatoeba audio is streamed. It is a way to try the
+idea, not the offline version.
 
 ```bash
 git clone https://github.com/YOURNAME/deutsch-hoeren.git
@@ -132,13 +161,31 @@ python _build_index.py    # -> data/clips_tatoeba.json
 python _build_app.py      # -> ../word-audio-search.html
 ```
 
-Open `word-audio-search.html`. That single file works with no server at all,
-on 32,940 Tatoeba recordings. It is the whole app minus the million clips.
+Open `word-audio-search.html`. That single file needs no server and no
+database. It searches 32,940 Tatoeba recordings, and most of them come with an
+English translation. It is the whole app minus the million local clips.
+
+It streams its audio from tatoeba.org, so keep the internet on. Offline is what
+the full corpus above is for.
 
 ## The full corpus (19,759 voices)
 
-Adds Mozilla **Common Voice** (CC0). Free, but it needs a Mozilla account for
-the download link, and it is genuinely large:
+Adds Mozilla **Common Voice** (CC0), from the Mozilla Data Collective:
+
+- **<https://commonvoice.mozilla.org/en/datasets>** is the front door. Pick
+  German, and it sends you to the Mozilla Data Collective to download.
+- **<https://mozilladatacollective.com/>** is where the file actually lives.
+
+**You need a free account, and it gives you an API key.** There is no public
+direct link, because Mozilla wants to count downloads. `_download_commonvoice.ps1`
+asks for that key when you run it, uses it once to request a download link, then
+wipes it. The key is never written to a file, and it is not in this repo.
+
+If you would rather not deal with a key at all, download it by hand from the
+website and skip straight to `_ingest.py`. The script is a convenience, not a
+requirement.
+
+It is free, and it is genuinely large:
 
 | | |
 |---|---|
