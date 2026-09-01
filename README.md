@@ -134,17 +134,12 @@ For **Anki**, this goes in the Back Template of your note type:
 <a href="http://127.0.0.1:8731/?q={{Front}}">🎧 Hear real people say {{Front}}</a>
 ```
 
-The server has to be running first.
+The server has to be running first. Then clicking the link on a card opens the
+app in your normal browser, already searching that word. Tested in Anki 2.1.65
+on Windows.
 
-Anki's card window is a browser, and Anki hands external links to your normal
-browser rather than opening them itself. **Test it on one card before you paste
-it into a note type you care about** — Anki's link handling has changed between
-versions, and a link that is silently ignored looks identical to one that works.
-If nothing happens when you click, see the fallback in
-[examples/README.md](examples/README.md).
-
-AnkiDroid and AnkiMobile cannot reach `127.0.0.1` on your PC at all. That one is
-certain, and no version will change it.
+AnkiDroid and AnkiMobile cannot reach `127.0.0.1` on your PC. That follows from
+what `127.0.0.1` means and no version will change it.
 
 Copy-paste versions for Anki and for your own HTML decks, plus the narrow
 side-panel mode, are in **[examples/](examples/)**.
