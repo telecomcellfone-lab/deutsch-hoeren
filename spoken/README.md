@@ -56,6 +56,13 @@ sources would never appear at all.
 There is no lemmatiser. Searching `gehen` will not find `ging`; search the form
 you want, or use `Wortanfang`.
 
+**Search the modern spelling.** The corpus was recorded after the 1996 spelling
+reform, so it is full of `Fluss` and has almost no `Fluß`. Searching the old
+spelling returns 3 clips where the new one returns 600. If you are reading an
+older book, or anything printed before about 2000, look the word up in its
+current form: `Fuß` stays `Fuß`, but `Fluß`, `Faß`, `daß` and `mußte` are now
+`Fluss`, `Fass`, `dass` and `musste`.
+
 ## Spontaneous speech
 
 Common Voice's other corpus: people answering a question in their own words,

@@ -33,11 +33,13 @@ function hoerenLink(word) {
 }
 
 // Your own deck goes here. Any list of words will do.
+// Four common words, each with a sound that English does not have.
+// Every one of them returns hundreds of recordings.
 var cards = [
-  { de: "Straße",        en: "street, road" },
-  { de: "Fluß",          en: "river" },
-  { de: "Wetterleuchten", en: "sheet lightning" },
-  { de: "gemütlich",     en: "cosy, comfortable" }
+  { de: "Straße",    en: "street, road" },       // the ß
+  { de: "natürlich", en: "natural, of course" }, // ü, and the soft -ch
+  { de: "Kirche",    en: "church" },             // the soft -ch again
+  { de: "Frühstück", en: "breakfast" }           // ü twice
 ];
 
 document.getElementById("deck").innerHTML = cards.map(function (c) {
