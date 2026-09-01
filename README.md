@@ -57,9 +57,9 @@ Two things to be honest about.
 - **There are more men than women.** Of the speakers who gave a gender, about
   4,000 said male and about 700 said female. That is the corpus, not a choice
   this app made.
-- **The sound quality goes up and down.** These are real people recording at
-  home on whatever they own. Most clips are clear. Some are quiet, some are
-  noisy, some are rushed. Skip those ones. There are thousands more.
+- **The sound quality varies.** These are real people recording at home on
+  whatever equipment they own. The audio is generally good, but some clips are
+  clearer than others.
 
 That trade is worth it. Online dictionaries usually give you one recording per
 word, and more and more of them are made by a computer. A synthetic voice is
