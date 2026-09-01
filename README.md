@@ -122,8 +122,20 @@ on 32,940 Tatoeba recordings. It is the whole app minus the million clips.
 
 ## The full corpus (19,759 voices)
 
-Adds Mozilla **Common Voice** (CC0): a 35 GB archive that unpacks to about a
-million mp3s. Free, but it needs a Mozilla account for the download link.
+Adds Mozilla **Common Voice** (CC0). Free, but it needs a Mozilla account for
+the download link, and it is genuinely large:
+
+| | |
+|---|---|
+| archive to download | 34.8 GB, one file |
+| unpacked | 36.4 GB, 1,018,463 mp3 files |
+| search database it builds | 273 MB |
+| **free space needed during setup** | **about 70 GB** |
+
+You need the 70 GB because the archive and the unpacked copy both exist for a
+while. Delete the archive afterwards and you settle at 36.4 GB. Unpacking a
+million small files takes about an hour and looks frozen the whole time. It is
+not frozen.
 
 ```bash
 # 1. get the archive (prompts for your key, resumes if the link expires)
